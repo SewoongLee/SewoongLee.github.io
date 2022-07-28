@@ -45,13 +45,14 @@
             </div>
         </div>
     </div>
+    <div id="martini_graph" style="text-align:center;"></div>
 </body>
 
 <script>
     const svgWidth = 300, svgHeight = 300;
     const data = [420, 80, 130, 210, 510, 80];
 
-    const svg = d3.select("body")
+    const svg = d3.select("#martini_graph")
     .append("svg")
     .attr("width", svgWidth)
     .attr("height", svgHeight)
