@@ -59,9 +59,9 @@ p {
 .collumns {}
 
 .collumn {
-    font-size: 14px;
+    font-size: 17px;
     line-height: 20px;
-    width: 17.5%;
+    width: 25%;
     display: inline-block;
     padding: 0 1% 0 1%;
     vertical-align: top;
@@ -83,15 +83,14 @@ p {
 
 .collumn .headline.hl1 {
     font-weight: 700;
-    font-size: 30px;
+    font-size: 40px;
     text-transform: uppercase;
     padding: 10px 0 10px 0;
 }
 
 .collumn .headline.hl2 {
     font-weight: 400;
-    font-style: italic;
-    font-size: 24px;
+    font-size: 28px;
     box-sizing: border-box;
     padding: 10px 0 10px 0;
 }
@@ -215,7 +214,7 @@ p {
     font-family: 'Playfair Display', serif;
     font-size: 36px;
     line-height: 44px;
-    /*font-style: italic;*/
+    font-style: italic;
     text-align: center;
     font-weight: 400;
     display: block;
