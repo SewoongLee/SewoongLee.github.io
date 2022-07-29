@@ -2,9 +2,8 @@
 <html>
 
 <head>
-    <script type = "text/javascript" src = "https://d3js.org/d3.v4.min.js"></script>
-    <link
-        rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+    <link rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="styles/newspaper.css">
     <title>My Title</title>
     <meta name="viewport" content="width=device-width">
@@ -15,18 +14,19 @@
     <div class="head">
         <div class="subhead">Friday July 29, 2022</div>
         <div class="collumns">
-            
+
             <div class="collumn">
                 <div class="head"><span class="headline hl1">How many martinis have appeared in 007 history?</span>
-                    <p><span class="headline hl2">Visualization of Statistics in the James Bond Movie Series So Far</span></p>
+                    <p><span class="headline hl2">Visualization of Statistics in the James Bond Movie Series So
+                            Far</span></p>
                 </div>
-                Dry martini, or vodka martini has been symbolic drink of James Bond movies, also known as 007. In most of 007 movies, James Bond ordered the martini in his own way.</p>
-                
+                Dry martini, or vodka martini has been symbolic drink of James Bond movies, also known as 007. In most
+                of 007 movies, James Bond ordered the martini in his own way.</p>
+
                 <figure class="figure">
-                    <img class="media"
-                        src="giphy.gif"
-                        alt="">
-                    <figcaption class="figcaption">"Dry martini. Wait, 3 measures of gordons, 1 of vodka, half a measure of kina lillet, shake it over ice. Then add a thin slice of lemon peel."
+                    <img class="media" src="giphy.gif" alt="">
+                    <figcaption class="figcaption">"Dry martini. Wait, 3 measures of gordons, 1 of vodka, half a measure
+                        of kina lillet, shake it over ice. Then add a thin slice of lemon peel."
                     </figcaption>
                 </figure>
 
@@ -50,84 +50,84 @@
 
 <script>
 
-d3.csv("https://raw.githubusercontent.com/SewoongLee/SewoongLee.github.io/v0.0.4/jamesbond.csv", function(data) {
-    console.log("data.length : " + data.length); // 24
-    for (var i = 0; i < data.length; i++) {
-        // console.log(data[i].Year);
-        // console.log(data[i].Movie);  
-        // console.log(data[i].Martinis); 
-    }
-});
+    d3.csv("https://raw.githubusercontent.com/SewoongLee/SewoongLee.github.io/v0.0.4/jamesbond.csv", function (data) {
+        console.log("data.length : " + data.length); // 24
+        for (var i = 0; i < data.length; i++) {
+            // console.log(data[i].Year);
+            // console.log(data[i].Movie);  
+            // console.log(data[i].Martinis); 
+        }
+    });
 
-// set the dimensions and margins of the graph
-var margin = {top: 30, right: 30, bottom: 70, left: 60},
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    // set the dimensions and margins of the graph
+    var margin = { top: 30, right: 30, bottom: 70, left: 60 },
+        width = 700 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
 
-// append the svg object to the body of the page
-var svg = d3.select("#martini_graph")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+    // append the svg object to the body of the page
+    var svg = d3.select("#martini_graph")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
 
-// Parse the Data
-d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/7_OneCatOneNum_header.csv", function(data) {
+    // Parse the Data
+    d3.csv("https://raw.githubusercontent.com/SewoongLee/SewoongLee.github.io/v0.0.4/jamesbond.csv", function (data) {
 
-// X axis
-var x = d3.scaleBand()
-  .range([ 0, width ])
-  .domain(data.map(function(d) { return d.Country; }))
-  .padding(0.2);
-svg.append("g")
-  .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x))
-  .selectAll("text")
-    .attr("transform", "translate(-10,0)rotate(-45)")
-    .style("text-anchor", "end");
+        // X axis
+        var x = d3.scaleBand()
+            .range([0, width])
+            .domain(data.map(function (d) { return d.Movie + " (" + d.Year + ")"; }))
+            .padding(0.2);
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x))
+            .selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end");
 
-// Add Y axis
-var y = d3.scaleLinear()
-  .domain([0, 13000])
-  .range([ height, 0]);
-svg.append("g")
-  .call(d3.axisLeft(y));
+        // Add Y axis
+        var y = d3.scaleLinear()
+            .domain([0, 10])
+            .range([height, 0]);
+        svg.append("g")
+            .call(d3.axisLeft(y));
 
-// Bars
-svg.selectAll("mybar")
-  .data(data)
-  .enter()
-  .append("rect")
-    .attr("x", function(d) { return x(d.Country); })
-    .attr("y", function(d) { return y(d.Value); })
-    .attr("width", x.bandwidth())
-    .attr("height", function(d) { return height - y(d.Value); })
-    .attr("fill", "#69b3a2")
+        // Bars
+        svg.selectAll("mybar")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("x", function (d) { return x(d.Movie + " (" + d.Year + ")"); })
+            .attr("y", function (d) { return y(d.Martinis); })
+            .attr("width", x.bandwidth())
+            .attr("height", function (d) { return height - y(d.Martinis); })
+            .attr("fill", "#69b3a2")
             .on("mouseover", onMouseOver)
             .on("mouseout", onMouseOut)
 
-})
+    })
 
-    function onMouseOut(d,i){
+    function onMouseOut(d, i) {
         d3.select(this)
-        .transition()
-        .duration(400)
-        .style("fill", "orange");
+            .transition()
+            .duration(400)
+            .style("fill", "#69b3a2");
         d3.select('.val')
-        .selectAll("text").filter((d,index) => index === i)
-        .attr("display", "none");
+            .selectAll("text").filter((d, index) => index === i)
+            .attr("display", "none");
     }
 
-    function onMouseOver(d,i){
+    function onMouseOver(d, i) {
         d3.select(this)
-        .transition()
-        .duration(400)
-        .style("fill", "red");
+            .transition()
+            .duration(400)
+            .style("fill", "orange");
         d3.select('.val')
-        .selectAll("text").filter((d,index) => index === i)
-        .attr("display", "block");
+            .selectAll("text").filter((d, index) => index === i)
+            .attr("display", "block");
     }
 </script>
 
