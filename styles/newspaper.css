@@ -56,8 +56,6 @@ p {
 
 }
 
-.collumns {}
-
 .collumn {
     font-size: 17px;
     line-height: 20px;
@@ -246,6 +244,11 @@ p {
 
 .collumn .figcaption {
     font-style: italic;
+    font-size: 16px;
+}
+
+.figtitle {
+    font-weight: bold;
     font-size: 16px;
 }
 

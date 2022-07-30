@@ -13,39 +13,53 @@
 <body>
     <div class="head">
         <div class="subhead">Friday July 29, 2022</div>
-        <div class="collumns">
-
-            <div class="collumn">
-                <div class="head"><span class="headline hl1"><br>How many martinis have appeared in 007 history?</span>
-                    <p><span class="headline hl2">Visualization of Statistics <br>in the James Bond Movie Series</span>
-                    </p>
-                </div>
-                Dry martini, or vodka martini has been symbolic drink of James Bond movies, also known as 007. In most
-                of 007 movies, James Bond ordered the martini in his own way.</p>
-
-                <figure class="figure">
-                    <img class="media" src="giphy.gif" alt="">
-                    <figcaption class="figcaption">"Dry martini. Wait, 3 measures of gordons, 1 of vodka, half a measure
-                        of kina lillet, shake it over ice. Then add a thin slice of lemon peel."
-                    </figcaption>
-                </figure>
-
-                <p>그렇다면 과연 모든 영화에서 마티니가 등장할까? 007 영화는 긴 역사를 갖고 있는 만큼 긴 시간동안 축적된 각 영화의 특색과 데이터가 있다.</p>
-
-                <span class="citation">
-                    "Martini. <br>
-                    Shaken, not stirred."
+        <div class="collumn">
+            <span class="headline hl1">
+                <br>
+                How many martinis have appeared in 007 history?
+            </span>
+            <p>
+                <span class="headline hl2">
+                    Visualization of Statistics <br>
+                    in the James Bond Movie Series
                 </span>
+            </p>
+            <p>
+                Dry martini, or vodka martini has been symbolic drink of James Bond movies, also known as 007.
+                In most of 007 movies, James Bond ordered the martini in his own way.
+            </p>
 
-                <p>우선 마티니에 대한 데이터를 보면... 그리고 마티니 뿐 아니라 여러가지 통계를 조회할 수 있다. Coincidently, this visual article follows martini glass structure.</p>
+            <figure class="figure">
+                <img class="media" src="giphy.gif" alt="">
+                <figcaption class="figcaption">
+                    "Dry martini. Wait, 3 measures of gordons, 1 of vodka, half a measure
+                    of kina lillet, shake it over ice. Then add a thin slice of lemon peel."
+                </figcaption>
+            </figure>
 
+            <p>
+                그렇다면 과연 모든 영화에서 마티니가 등장할까?
+                007 영화는 긴 역사를 갖고 있는 만큼 긴 시간동안 축적된 각 영화의 특색과 데이터가 있다.
+            </p>
 
+            <span class="citation">
+                "Martini. <br>
+                Shaken, not stirred."
+            </span>
 
+            <p>
+                우선 마티니에 대한 데이터를 보면...
+                그리고 마티니 뿐 아니라 여러가지 통계를 조회할 수 있다.
+                Coincidently, this visual article follows martini glass structure.
+            </p>
+        </div>
 
-            </div>
+        <div>
+            <text class="figtitle">[Fig. 1] The number of martinis in the 007 movie series</text>
+            <div class="martini_graph" style="text-align:center;"></div>
         </div>
     </div>
-    <div id="martini_graph" style="text-align:center;"></div>
+
 </body>
 
 <script>
@@ -57,7 +71,7 @@
         height = 500 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
-    var svg = d3.select("#martini_graph")
+    var svg = d3.select(".martini_graph")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -120,7 +134,7 @@
             .attr("x", function (d, i) {
                 return xScale(dataX(d)) + xScale.bandwidth() / 2;
             })
-            .attr("y", (d) => yScale(dataY(d))-3)
+            .attr("y", (d) => yScale(dataY(d)) - 3)
             .text((d) => dataY(d))
             .attr("font-family", "sans-serif")
             .attr("font-size", "12px")
