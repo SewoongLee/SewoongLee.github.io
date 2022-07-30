@@ -2,7 +2,10 @@
 <html>
 
 <head>
-    <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+    <script type="text/javascript"></script>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js"></script>
+
     <link rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="styles/newspaper.css">
     <title>My Title</title>
@@ -33,7 +36,8 @@
                 <img class="media" src="giphy.gif" alt="">
                 <figcaption class="figcaption">
                     "Dry martini. Wait, 3 measures of gordons, 1 of vodka, half a measure
-                    of kina lillet, shake it over ice. Then add a thin slice of lemon peel."
+                    of kina lillet, shake it over ice. Then add a thin slice of lemon peel." <br>
+                    - Recipe of the Vesper Martini in Casino Royale (2006)
                 </figcaption>
             </figure>
 
@@ -58,6 +62,21 @@
             <text class="figtitle">[Fig. 1] The number of martinis in the 007 movie series</text>
             <div class="martini_graph" style="text-align:center;"></div>
         </div>
+
+        <div class="collumn">
+            <p>
+                What about other statistics? Let's drill down into others.
+            </p>
+        </div>
+        <div>
+            <text class="figtitle">[Fig. 2] Statistics in the 007 movie series</text>
+            <div>
+                <button onclick="update('var1')">Variable 1</button>
+                <button onclick="update('var2')">Variable 2</button>
+            </div>
+        </div>
+        <div class="all_graphs" style="text-align:center;">
+        </div>
     </div>
 
 </body>
@@ -66,9 +85,12 @@
     console.log("Hello!")
 
     // set the dimensions and margins of the graph
-    var margin = { top: 30, right: 30, bottom: 160, left: 60 },
+    var margin = { top: 30, right: 30, bottom: 200, left: 60 },
         width = 700 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        height = 600 - margin.top - margin.bottom;
+
+    var original_color = "gray"
+    var highlight_color = "orange"
 
     // append the svg object to the body of the page
     var svg = d3.select(".martini_graph")
@@ -97,33 +119,36 @@
             .padding(0.2);
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(xScale))
+            .transition().duration(1000).call(d3.axisBottom(xScale))
             .selectAll("text")
             .attr("transform", "translate(-10,0)rotate(-45)")
             .style("text-anchor", "end");
 
-        console.log(data)
-        // console.log(d3.max(dataY(data)))
-
         // Add Y axis
         var yScale = d3.scaleLinear()
-            .domain([0, 10])
+            .domain([0, d3.max(data, function (d) { return dataY(d) })])
             .range([height, 0]);
+        const yAxisTicks = yScale.ticks()
+            .filter(tick => Number.isInteger(tick));
         svg.append("g")
-            .call(d3.axisLeft(yScale));
+            .transition()
+            .duration(1000)
+            .call(d3.axisLeft(yScale).tickValues(yAxisTicks).tickFormat(d3.format('d')));
 
         // Bars
         svg.selectAll("mybar")
             .data(data)
             .enter()
             .append("rect")
+            .on("mouseover", onMouseOver)
+            .on("mouseout", onMouseOut)
+            .transition()
+            .duration(1000)
             .attr("x", function (d) { return xScale(dataX(d)); })
             .attr("y", function (d) { return yScale(dataY(d)); })
             .attr("width", xScale.bandwidth())
             .attr("height", function (d) { return height - yScale(dataY(d)); })
-            .attr("fill", "#69b3a2")
-            .on("mouseover", onMouseOver)
-            .on("mouseout", onMouseOut)
+            .attr("fill", original_color)
 
         svg.append("g").attr("class", "val");
         svg.select(".val")
@@ -135,9 +160,17 @@
                 return xScale(dataX(d)) + xScale.bandwidth() / 2;
             })
             .attr("y", (d) => yScale(dataY(d)) - 3)
-            .text((d) => dataY(d))
+            .text(function(d) {
+                num = dataY(d)
+                if (num == 1)
+                    return "Once";
+                else if (num == 2)
+                    return "Twice";
+                else
+                    return num + " times";
+            })
             .attr("font-family", "sans-serif")
-            .attr("font-size", "12px")
+            .attr("font-size", "10px")
             .attr("fill", "black")
             .attr("text-anchor", "middle")
             .attr("display", "none");
@@ -148,7 +181,7 @@
         d3.select(this)
             .transition()
             .duration(400)
-            .style("fill", "#69b3a2");
+            .style("fill", original_color);
         d3.select('.val')
             .selectAll("text").filter((d, index) => index === i)
             .attr("display", "none");
@@ -158,11 +191,76 @@
         d3.select(this)
             .transition()
             .duration(400)
-            .style("fill", "orange");
+            .style("fill", highlight_color);
         d3.select('.val')
             .selectAll("text").filter((d, index) => index === i)
             .attr("display", "block");
     }
+
+
+    ////////////////////////////////////////////////////////
+    //                     ALL GRAPHS                     //
+    ////////////////////////////////////////////////////////
+
+    // append the svg object to the body of the page
+    var svg_all = d3.select(".all_graphs")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+    // Initialize the X axis
+    var xScaleAll = d3.scaleBand()
+        .range([0, width])
+        .padding(0.2);
+    var xAxisAll = svg_all.append("g")
+        .attr("transform", "translate(0," + height + ")")
+
+    // Initialize the Y axis
+    var yScaleAll = d3.scaleLinear()
+        .range([height, 0]);
+    var yAxisAll = svg_all.append("g")
+        .attr("class", "myYaxis")
+
+
+    // A function that create / update the plot for a given variable:
+    function update(selectedVar) {
+
+        // Parse the Data
+        d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/barplot_change_data.csv", function (data) {
+
+            // X axis
+            xScaleAll.domain(data.map(function (d) { return d.group; }))
+            xAxisAll.transition().duration(1000).call(d3.axisBottom(xScaleAll))
+
+            // Add Y axis
+            yScaleAll.domain([0, d3.max(data, function (d) { return +d[selectedVar] })]);
+            yAxisAll.transition().duration(1000).call(d3.axisLeft(yScaleAll));
+
+            // variable u: map data to existing bars
+            var u = svg_all.selectAll("rect")
+                .data(data)
+
+            // update bars
+            u
+                .enter()
+                .append("rect")
+                .merge(u)
+                .transition()
+                .duration(1000)
+                .attr("x", function (d) { return xScaleAll(d.group); })
+                .attr("y", function (d) { return yScaleAll(d[selectedVar]); })
+                .attr("width", xScaleAll.bandwidth())
+                .attr("height", function (d) { return height - yScaleAll(d[selectedVar]); })
+                .attr("fill", original_color)
+        })
+
+    }
+
+    // Initialize plot
+    update('var1')
 </script>
 
 </html>
