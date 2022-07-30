@@ -72,11 +72,11 @@
         </div>
         <div>
             <text class="figtitle">[Fig. 2] Visualization of the 007 movie series with various statistics :</text>
-            <select>
+            <select id = "combo">
                 <option onclick="update('Kills_Bond')">Killed by Bond</button>
                 <option onclick="update('Kills_Others')">Killed by Others</button>
                 <option onclick="update('Budget')">Budget (Thousand USD)</button>
-                <option onclick="update('Film_Length')">Film Length</button>
+                <option onclick="update('Film_Length')">Film Length (min)</button>
                 <option onclick="update('Avg_User_IMDB')">IMDB User Rating</button>
                 <option onclick="update('Avg_User_Rtn_Tom')">Rotten Tomato User Rating</button>
                 <option onclick="update('Martinis')">Martinis</button>
@@ -97,6 +97,7 @@
 
     var original_color = "gray"
     var highlight_color = "orange"
+    var bar_duration = 500
 
     // append the svg object to the body of the page
     var svg = d3.select(".martini_graph")
@@ -149,7 +150,7 @@
             .on("mouseover", onMouseOver)
             .on("mouseout", onMouseOut)
             .transition()
-            .duration(1000)
+            .duration(bar_duration)
             .attr("x", function (d) { return xScale(dataX(d)); })
             .attr("y", function (d) { return yScale(dataY(d)); })
             .attr("width", xScale.bandwidth())
@@ -184,8 +185,8 @@
 
     function onMouseOut(d, i) {
         d3.select(this)
-            .transition()
-            .duration(400)
+            // .transition()
+            // .duration(400)
             .style("fill", original_color);
         d3.select('.val')
             .selectAll("text").filter((d, index) => index === i)
@@ -194,13 +195,11 @@
 
     function onMouseOver(d, i) {
         d3.select(this)
-            .transition()
-            .duration(400)
+            // .transition()
+            // .duration(400)
             .style("fill", highlight_color);
         d3.select('.val')
             .selectAll("text").filter(function (d, index) {
-                console.log("index : " + index);
-                console.log("i : " + i)
                 return index === i;
             })
             .attr("display", "block");
@@ -296,10 +295,11 @@
     var yAxisAll = svg_all.append("g")
         .attr("class", "myYaxis")
 
-
-
+    var currSelect
     // A function that create / update the plot for a given variable:
     function update(selectedVar) {
+
+        currSelect = selectedVar
 
         // Parse the Data
         d3.csv("https://raw.githubusercontent.com/SewoongLee/SewoongLee.github.io/v0.0.4/jamesbond.csv", function (data) {
@@ -320,8 +320,6 @@
                 var val = parseFloat(dataSelect(d, selectedVar));
                 return val;
             })
-            console.log("max : " + ymax);
-            console.log("min : " + ymin);
 
             yScaleAll.domain([0, ymax]);
             yAxisAll.transition().duration(1000).call(d3.axisLeft(yScaleAll));
@@ -338,7 +336,7 @@
                 .on("mouseout", onMouseOutAll)
                 .merge(u)
                 .transition()
-                .duration(1000)
+                .duration(bar_duration)
                 .attr("x", function (d) { return xScaleAll(dataX(d)); })
                 .attr("y", function (d) { return yScaleAll(dataSelect(d, selectedVar)); })
                 .attr("width", xScaleAll.bandwidth())
@@ -352,19 +350,15 @@
                 .enter()
                 .append("text")
                 .attr("x", function (d, i) {
-
                     var x = xScaleAll(dataX(d)) + xScaleAll.bandwidth() / 2
-                    console.log("x : " + x);
                     return x;
                 })
                 .attr("y", function (d) {
                     var y = yScaleAll(dataSelect(d, selectedVar)) - 3;
-                    console.log("y : " + y);
                     return y;
                 })
                 .text(function (d) {
                     var t = dataSelect(d, selectedVar)
-                    console.log("t : " + t)
                     return t;
                 })
                 .attr("font-family", "sans-serif")
@@ -373,33 +367,42 @@
                 .attr("text-anchor", "middle")
                 .attr("display", "none");
         })
-
     }
 
     function onMouseOutAll(d, i) {
-        d3.select(this)
-            .transition()
-            .duration(400)
-            .style("fill", original_color);
-        d3.select('.valAll')
-            .selectAll("text").filter((d, index) => index === i)
-            .attr("display", "none");
-    }
+            d3.select(this)
+                // .transition()
+                // .duration(100)
+                .style("fill", original_color);
+            d3.select('.valAll')
+                .selectAll("text").filter((d, index) => index === i)
+                .attr("display", "none");
+        }
 
-    function onMouseOverAll(d, i) {
-        d3.select(this)
-            .transition()
-            .duration(400)
-            .style("fill", highlight_color);
-        d3.select('.valAll')
-            .selectAll("text").filter(function (d, index) {
-                console.log("index : " + index);
-                console.log("i : " + i)
-                return index === i;
-            })
-            .attr("display", "block");
-    }
+        function onMouseOverAll(d, i) {
+            d3.select(this)
+                // .transition()
+                // .duration(100)
+                .style("fill", highlight_color);
 
+            d3.select('.valAll')
+                .selectAll("text").filter(function (d, index) {
+                    return index === i;
+                })
+                .attr("x", function (d, i) {
+                    var x = xScaleAll(dataX(d)) + xScaleAll.bandwidth() / 2
+                    return x;
+                })
+                .attr("y", function (d) {
+                    var y = yScaleAll(dataSelect(d, currSelect)) - 3;
+                    return y;
+                })
+                .text(function (d) {
+                    var t = dataSelect(d, currSelect)
+                    return t;
+                })
+                .attr("display", "block");
+        }
 
     // Initialize plot
     update('Kills_Bond')
