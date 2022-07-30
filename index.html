@@ -53,8 +53,8 @@
 
             <p>
                 우선 마티니에 대한 데이터를 보면...
-                그리고 마티니 뿐 아니라 여러가지 통계를 조회할 수 있다.
-                Coincidently, this visual article follows martini glass structure.
+                이언 플레밍의 원작 소설에도 등장하였던
+                마티니를 그대로 주문하였고 여기에 베스퍼라는 이름을 붙여준다.
             </p>
         </div>
 
@@ -65,7 +65,9 @@
 
         <div class="collumn">
             <p>
+                그리고 마티니 뿐 아니라 여러가지 통계를 조회할 수 있다.
                 What about other statistics? Let's drill down into others.
+                Coincidently, this visual article follows martini glass structure.
             </p>
         </div>
         <div>
@@ -196,6 +198,50 @@
             .selectAll("text").filter((d, index) => index === i)
             .attr("display", "block");
     }
+
+    // Features of the annotation
+    const qos_ann = [
+    {
+        note: {
+        label: "Here is the annotation label",
+        title: "Annotation title"
+        },
+        x: 595,
+        y: 31,
+        dy: 30,
+        dx: -100
+    }
+    ]
+
+    const cr_ann = [
+    {
+        note: {
+        label: "Here is the annotation label",
+        title: "Annotation title"
+        },
+        x: 570,
+        y: 215,
+        dy: -100,
+        dx: -300
+    }
+    ]
+
+    // Add annotation to the chart
+    const makeQosAnn = d3.annotation()
+    .annotations(qos_ann)
+
+    d3.select(".martini_graph")
+    .select("svg")
+    .append("g")
+    .call(makeQosAnn)
+
+    const makeCrAnn = d3.annotation()
+    .annotations(cr_ann)
+
+    d3.select(".martini_graph")
+    .select("svg")
+    .append("g")
+    .call(makeCrAnn)
 
 
     ////////////////////////////////////////////////////////
