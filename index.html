@@ -73,14 +73,18 @@
         <div>
             <text class="figtitle">[Fig. 2] Visualization of the 007 movie series with various statistics :</text>
             <select>
-                <option onclick="update('var1')">Variable 1</button>
-                <option onclick="update('var2')">Variable 2</button>
+                <option onclick="update('Kills_Bond')">Killed by Bond</button>
+                <option onclick="update('Kills_Others')">Killed by Others</button>
+                <option onclick="update('Budget')">Budget (Thousand USD)</button>
+                <option onclick="update('Film_Length')">Film Length</button>
+                <option onclick="update('Avg_User_IMDB')">IMDB User Rating</button>
+                <option onclick="update('Avg_User_Rtn_Tom')">Rotten Tomato User Rating</button>
+                <option onclick="update('Martinis')">Martinis</button>
             </select>
         </div>
         <div class="all_graphs" style="text-align:center;">
         </div>
     </div>
-
 </body>
 
 <script>
@@ -103,12 +107,12 @@
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
-    // Parse the Data
-    d3.csv("https://raw.githubusercontent.com/SewoongLee/SewoongLee.github.io/v0.0.4/jamesbond.csv", function (data) {
-
-        function dataX(d) {
+    function dataX(d) {
             return d.Movie + " (" + d.Year + ")"
         }
+
+    // Parse the Data
+    d3.csv("https://raw.githubusercontent.com/SewoongLee/SewoongLee.github.io/v0.0.4/jamesbond.csv", function (data) {
 
         function dataY(d) {
             return d.Martinis
@@ -195,7 +199,11 @@
             .duration(400)
             .style("fill", highlight_color);
         d3.select('.val')
-            .selectAll("text").filter((d, index) => index === i)
+            .selectAll("text").filter(function(d, index){
+                console.log("index : " + index);
+                console.log("i : " + i)
+                return index === i;
+            })
             .attr("display", "block");
     }
 
@@ -248,6 +256,25 @@
     //                     ALL GRAPHS                     //
     ////////////////////////////////////////////////////////
 
+    function dataSelect(d, selectedVar) {
+        if(selectedVar == "Budget")
+            return d.Budget;
+        if(selectedVar == "Film_Length")
+            return d.Film_Length;
+        if(selectedVar == "Avg_User_IMDB")
+            return d.Avg_User_IMDB;
+        if(selectedVar == "Avg_User_Rtn_Tom")
+            return d.Avg_User_Rtn_Tom;
+        if(selectedVar == "Martinis")
+            return d.Martinis;
+        if(selectedVar == "Kills_Bond")
+            return d.Kills_Bond;
+        if(selectedVar == "Kills_Others")
+            return d.Kills_Others;
+        if(selectedVar == "Video_Game")
+            return d.Video_Game;
+        }
+
     // append the svg object to the body of the page
     var svg_all = d3.select(".all_graphs")
         .append("svg")
@@ -256,6 +283,8 @@
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
+
+    svg_all.append("g").attr("class", "val");   
 
     // Initialize the X axis
     var xScaleAll = d3.scaleBand()
@@ -269,20 +298,35 @@
         .range([height, 0]);
     var yAxisAll = svg_all.append("g")
         .attr("class", "myYaxis")
-
+    
+   
 
     // A function that create / update the plot for a given variable:
     function update(selectedVar) {
 
         // Parse the Data
-        d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/barplot_change_data.csv", function (data) {
+        d3.csv("https://raw.githubusercontent.com/SewoongLee/SewoongLee.github.io/v0.0.4/jamesbond.csv", function (data) {
 
             // X axis
-            xScaleAll.domain(data.map(function (d) { return d.group; }))
+            xScaleAll.domain(data.map(function (d) { return dataX(d); }))
             xAxisAll.transition().duration(1000).call(d3.axisBottom(xScaleAll))
+            .selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end");
 
             // Add Y axis
-            yScaleAll.domain([0, d3.max(data, function (d) { return +d[selectedVar] })]);
+            var ymax = d3.max(data, function (d) { 
+                var val = parseFloat(dataSelect(d, selectedVar));
+                return val;
+            })
+            var ymin = d3.min(data, function (d) { 
+                var val = parseFloat(dataSelect(d, selectedVar));
+                return val;
+            })
+            console.log("max : " + ymax);
+            console.log("min : " + ymin);
+
+            yScaleAll.domain([0, ymax]);
             yAxisAll.transition().duration(1000).call(d3.axisLeft(yScaleAll));
 
             // variable u: map data to existing bars
@@ -293,20 +337,50 @@
             u
                 .enter()
                 .append("rect")
+                .on("mouseover", onMouseOver)
+                .on("mouseout", onMouseOut)
                 .merge(u)
                 .transition()
                 .duration(1000)
-                .attr("x", function (d) { return xScaleAll(d.group); })
-                .attr("y", function (d) { return yScaleAll(d[selectedVar]); })
+                .attr("x", function (d) { return xScaleAll(dataX(d)); })
+                .attr("y", function (d) { return yScaleAll(dataSelect(d, selectedVar)); })
                 .attr("width", xScaleAll.bandwidth())
-                .attr("height", function (d) { return height - yScaleAll(d[selectedVar]); })
+                .attr("height", function (d) { return height - yScaleAll(dataSelect(d, selectedVar)); })
                 .attr("fill", original_color)
+
+             
+            svg_all.select(".val")
+                .selectAll("text" + selectedVar)
+                .data(data)
+                .enter()
+                .append("text" + selectedVar)
+                .attr("x", function(d, i) {
+                    
+                    var x = xScaleAll(dataX(d)) + xScaleAll.bandwidth() / 2
+                    console.log("x : " + x);
+                    return x;
+                })
+                .attr("y", function(d) {
+                    var y =  yScaleAll(dataSelect(d, selectedVar)) - 3;
+                    console.log("y : " + y);
+                    return y;
+                })
+                .text(function(d) {
+                    var t = dataSelect(d, selectedVar)
+                    console.log("t : " + t)
+                    return t;
+                })
+                .attr("font-family", "sans-serif")
+                .attr("font-size", "10px")
+                .attr("fill", "black")
+                .attr("text-anchor", "middle")
+                .attr("display", "none");
         })
 
     }
 
     // Initialize plot
-    update('var1')
+    update('Kills_Bond')
 </script>
 
 </html>
