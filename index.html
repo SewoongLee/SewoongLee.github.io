@@ -108,8 +108,8 @@
             "translate(" + margin.left + "," + margin.top + ")");
 
     function dataX(d) {
-            return d.Movie + " (" + d.Year + ")"
-        }
+        return d.Movie + " (" + d.Year + ")"
+    }
 
     // Parse the Data
     d3.csv("https://raw.githubusercontent.com/SewoongLee/SewoongLee.github.io/v0.0.4/jamesbond.csv", function (data) {
@@ -166,7 +166,7 @@
                 return xScale(dataX(d)) + xScale.bandwidth() / 2;
             })
             .attr("y", (d) => yScale(dataY(d)) - 3)
-            .text(function(d) {
+            .text(function (d) {
                 num = dataY(d)
                 if (num == 1)
                     return "Once";
@@ -198,7 +198,7 @@
             .duration(400)
             .style("fill", highlight_color);
         d3.select('.val')
-            .selectAll("text").filter(function(d, index){
+            .selectAll("text").filter(function (d, index) {
                 console.log("index : " + index);
                 console.log("i : " + i)
                 return index === i;
@@ -208,47 +208,47 @@
 
     // Features of the annotation
     const qos_ann = [
-    {
-        note: {
-        label: "Here is the annotation label",
-        title: "Annotation title"
-        },
-        x: 595,
-        y: 31,
-        dy: 30,
-        dx: -100
-    }
+        {
+            note: {
+                label: "Here is the annotation label",
+                title: "Annotation title"
+            },
+            x: 595,
+            y: 31,
+            dy: 30,
+            dx: -100
+        }
     ]
 
     const cr_ann = [
-    {
-        note: {
-        label: "Here is the annotation label",
-        title: "Annotation title"
-        },
-        x: 570,
-        y: 215,
-        dy: -100,
-        dx: -300
-    }
+        {
+            note: {
+                label: "Here is the annotation label",
+                title: "Annotation title"
+            },
+            x: 570,
+            y: 215,
+            dy: -100,
+            dx: -300
+        }
     ]
 
     // Add annotation to the chart
     const makeQosAnn = d3.annotation()
-    .annotations(qos_ann)
+        .annotations(qos_ann)
 
     d3.select(".martini_graph")
-    .select("svg")
-    .append("g")
-    .call(makeQosAnn)
+        .select("svg")
+        .append("g")
+        .call(makeQosAnn)
 
     const makeCrAnn = d3.annotation()
-    .annotations(cr_ann)
+        .annotations(cr_ann)
 
     d3.select(".martini_graph")
-    .select("svg")
-    .append("g")
-    .call(makeCrAnn)
+        .select("svg")
+        .append("g")
+        .call(makeCrAnn)
 
 
     ////////////////////////////////////////////////////////
@@ -256,23 +256,23 @@
     ////////////////////////////////////////////////////////
 
     function dataSelect(d, selectedVar) {
-        if(selectedVar == "Budget")
+        if (selectedVar == "Budget")
             return d.Budget;
-        if(selectedVar == "Film_Length")
+        if (selectedVar == "Film_Length")
             return d.Film_Length;
-        if(selectedVar == "Avg_User_IMDB")
+        if (selectedVar == "Avg_User_IMDB")
             return d.Avg_User_IMDB;
-        if(selectedVar == "Avg_User_Rtn_Tom")
+        if (selectedVar == "Avg_User_Rtn_Tom")
             return d.Avg_User_Rtn_Tom;
-        if(selectedVar == "Martinis")
+        if (selectedVar == "Martinis")
             return d.Martinis;
-        if(selectedVar == "Kills_Bond")
+        if (selectedVar == "Kills_Bond")
             return d.Kills_Bond;
-        if(selectedVar == "Kills_Others")
+        if (selectedVar == "Kills_Others")
             return d.Kills_Others;
-        if(selectedVar == "Video_Game")
+        if (selectedVar == "Video_Game")
             return d.Video_Game;
-        }
+    }
 
     // append the svg object to the body of the page
     var svg_all = d3.select(".all_graphs")
@@ -295,8 +295,8 @@
         .range([height, 0]);
     var yAxisAll = svg_all.append("g")
         .attr("class", "myYaxis")
-    
-   
+
+
 
     // A function that create / update the plot for a given variable:
     function update(selectedVar) {
@@ -307,16 +307,16 @@
             // X axis
             xScaleAll.domain(data.map(function (d) { return dataX(d); }))
             xAxisAll.transition().duration(1000).call(d3.axisBottom(xScaleAll))
-            .selectAll("text")
-            .attr("transform", "translate(-10,0)rotate(-45)")
-            .style("text-anchor", "end");
+                .selectAll("text")
+                .attr("transform", "translate(-10,0)rotate(-45)")
+                .style("text-anchor", "end");
 
             // Add Y axis
-            var ymax = d3.max(data, function (d) { 
+            var ymax = d3.max(data, function (d) {
                 var val = parseFloat(dataSelect(d, selectedVar));
                 return val;
             })
-            var ymin = d3.min(data, function (d) { 
+            var ymin = d3.min(data, function (d) {
                 var val = parseFloat(dataSelect(d, selectedVar));
                 return val;
             })
@@ -334,8 +334,8 @@
             u
                 .enter()
                 .append("rect")
-                .on("mouseover", onMouseOver)
-                .on("mouseout", onMouseOut)
+                .on("mouseover", onMouseOverAll)
+                .on("mouseout", onMouseOutAll)
                 .merge(u)
                 .transition()
                 .duration(1000)
@@ -345,24 +345,24 @@
                 .attr("height", function (d) { return height - yScaleAll(dataSelect(d, selectedVar)); })
                 .attr("fill", original_color)
 
-            svg_all.append("g").attr("class", "val");   
-            svg_all.select(".val")
+            svg_all.append("g").attr("class", "valAll");
+            svg_all.select(".valAll")
                 .selectAll("text")
                 .data(data)
                 .enter()
                 .append("text")
-                .attr("x", function(d, i) {
-                    
+                .attr("x", function (d, i) {
+
                     var x = xScaleAll(dataX(d)) + xScaleAll.bandwidth() / 2
                     console.log("x : " + x);
                     return x;
                 })
-                .attr("y", function(d) {
-                    var y =  yScaleAll(dataSelect(d, selectedVar)) - 3;
+                .attr("y", function (d) {
+                    var y = yScaleAll(dataSelect(d, selectedVar)) - 3;
                     console.log("y : " + y);
                     return y;
                 })
-                .text(function(d) {
+                .text(function (d) {
                     var t = dataSelect(d, selectedVar)
                     console.log("t : " + t)
                     return t;
@@ -375,6 +375,31 @@
         })
 
     }
+
+    function onMouseOutAll(d, i) {
+        d3.select(this)
+            .transition()
+            .duration(400)
+            .style("fill", original_color);
+        d3.select('.valAll')
+            .selectAll("text").filter((d, index) => index === i)
+            .attr("display", "none");
+    }
+
+    function onMouseOverAll(d, i) {
+        d3.select(this)
+            .transition()
+            .duration(400)
+            .style("fill", highlight_color);
+        d3.select('.valAll')
+            .selectAll("text").filter(function (d, index) {
+                console.log("index : " + index);
+                console.log("i : " + i)
+                return index === i;
+            })
+            .attr("display", "block");
+    }
+
 
     // Initialize plot
     update('Kills_Bond')
